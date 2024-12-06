@@ -5,6 +5,11 @@ Single-cell RNA-seq analysis using Cromwell and WDL
 
 This project demonstrates single-cell RNA-seq analysis using Cromwell with WDL, analyzing BALF samples from a healthy control, and patients with mild and severe Covid 19. The workflow is defined in the `scWDL.wdl` file and can be executed with the provided `inputs.json` file.
 
+This project also demonstrates use of Github to 
+ - Create a feature branch
+ - Make updates in the branch
+ - Merge the branch back to the main
+
 ## Files:
 - `scRNA_seq_analysis.R`: R script for analyzing single-cell RNA-seq data.
 - `scWDL.wdl`: Workflow description file for Cromwell.
