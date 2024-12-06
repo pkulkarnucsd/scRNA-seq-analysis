@@ -1,0 +1,5 @@
+{
+  "scRNA_seq_analysis.healthy_file": "scRNA.balf.scRNA.healthy.feature_bc_matrix.h5",
+  "scRNA_seq_analysis.mild_file": "scRNA.balf.scRNA.mild.feature_bc_matrix.h5",
+  "scRNA_seq_analysis.severe_file": "scRNA.balf.scRNA.severe.feature_bc_matrix.h5"
+}
