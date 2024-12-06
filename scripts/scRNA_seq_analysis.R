@@ -108,6 +108,14 @@ save_plot(umap_clusters, "umap_clusters.png")
 umap_split_by_treatment <- DimPlot(balf, reduction = "umap", split.by = "orig.ident")
 save_plot(umap_split_by_treatment, "umap_split_by_treatment.png")
 
+options(repr.plot.width=10, repr.plot.height=7)
+
+cellcounts <- table(Idents(balf.combined),balf.combined$treatment)
+cellcountsnorm <- t(cellcounts)/colSums(cellcounts)
+barplotCellCount <- barplot(cellcountsnorm,beside = TRUE, ylab="Fraction of cells in each Cluster")
+save_plot(barplotCellCount, "barplotCellCount.png")
+options(repr.plot.width=7, repr.plot.height=7)
+
 balf <- JoinLayers(balf)
 # Find markers
 balf.markers <- FindAllMarkers(balf, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
@@ -115,15 +123,22 @@ balf.markers <- FindAllMarkers(balf, only.pos = TRUE, min.pct = 0.25, logfc.thre
 # Select top markers and save to CSV
 bestMarkers <- balf.markers %>%
   group_by(cluster) %>%
-  top_n(n = 1, wt = avg_log2FC) %>%
+  top_n(n = 3, wt = avg_log2FC) %>%
   arrange(desc(avg_log2FC))
+
+dotPlotGenes <- DotPlot(balf.combined, features =x, cols = c("green", "blue", "red"), dot.scale = 5, split.by = "treatment") + RotatedAxis()
+save_plot(dotPlotGenes, "dotPlotGenes.png")
 
 # Save markers to a CSV
 write.csv(bestMarkers, file = "best_markers.csv", row.names = FALSE)
 
+topDEG_genes <- balf.markers %>%
+  group_by(cluster) %>%
+  top_n(n = 1, wt = avg_log2FC) %>%
+  arrange(desc(avg_log2FC))
 # Save plots as PDF
 pdf("output.pdf")
-topDEG_genes <- unique(bestMarkers$gene)
+topDEG_genes <- unique(topDEG_genes$gene)
 for (gene in topDEG_genes) {
   p <- FeaturePlot(balf, features = gene, min.cutoff = "q9", split.by = "treatment") + 
     ggtitle(paste("Feature Plot for", gene))
