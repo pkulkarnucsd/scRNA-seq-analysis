@@ -1,23 +1,24 @@
 # # Load required libraries
+##############################################
+# Analyze Bronchoalveolar lavage fluid (BALF), commonly gathered during the diagnostic workup of pulmonary sarcoidosis.
+# It is thought to contain the immune cells found in lung alveoli, so can provide important information regarding the 
+# immunological response that takes place during pulmonary disease (like with Covid-19). 
+
+#This script analyzes single cell RNA-seq from BALF samples from a healthy control, and patients with mild and severe Covid 19. 
+##############################################
+
 library(Seurat)
 library(dplyr)
 library(patchwork)
 library(hdf5r)
 library(ggplot2)
-# library(tidyverse)
-
-
-# args <- c("scRNA.balf.scRNA.healthy.feature_bc_matrix.h5", 
-#           "scRNA.balf.scRNA.mild.feature_bc_matrix.h5", 
-#           "scRNA.balf.scRNA.severe.feature_bc_matrix.h5")
 
 # Parse input arguments
 args <- commandArgs(trailingOnly = TRUE)
 healthy_file <- args[1]
 mild_file <- args[2]
 severe_file <- args[3]
-# 
-# cat("Healthy file path: ", healthy_file, "\n")
+
 #function to save plots
 save_plot <- function(plot, filename) {
   ggsave(filename, plot, width = 10, height = 7)
@@ -79,13 +80,22 @@ severe <- subset(severe, subset = nFeature_RNA > 300 & nFeature_RNA < 3500)
 # Merge datasets
 balf <- merge(x = healthy, y = c(mild, severe), add.cell.ids = c("healthy", "mild", "severe"), project = "balf")
 
+############################
+# Seurat Pipeline
+############################
+
 # Normalize, find variable features, scale, PCA, UMAP, neighbors, clusters
 balf <- NormalizeData(balf) %>%
+  # Identify most variable genes across cells
   FindVariableFeatures(selection.method = "vst", nfeatures = 2000) %>%
+  # Standardize gene expression value 
   ScaleData(verbose = FALSE) %>%
+  # Dimension Reduction
   RunPCA(npcs = 30, verbose = FALSE) %>%
   RunUMAP(dims = 1:30, reduction = "pca") %>%
+  # Computes Nearest neighbor graph 
   FindNeighbors(dims = 1:30, reduction = "pca") %>%
+  # Clusters similar cells
   FindClusters(resolution = 0.3)
 
 # Save UMAP plots
