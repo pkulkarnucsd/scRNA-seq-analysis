@@ -146,3 +146,8 @@ for (gene in topDEG_genes) {
 }
 dev.off()
 
+############################################
+# From here, further analysis can be done that I have not automated.
+# This includes labeling clusters, which requires a lot of research/ knowlege from expert scientists in thost specific fields. 
+# Another step that is not usually automated, is pathway analysis, using GSEA or GProfiler. 
+############################################
